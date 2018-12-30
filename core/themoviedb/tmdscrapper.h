@@ -2,15 +2,15 @@
 #ifndef TMDSCRAPPER_H_N0R6FHDM
 #define TMDSCRAPPER_H_N0R6FHDM
 
-#include "scrapperbackend.h"
 #include <curlpp/cURLpp.hpp>
+#include "scrapperbackend.h"
 
 namespace kfl {
 namespace themoviedb {
 struct Scrapper : public kfl::ScrapperBackend {
     Scrapper();
     ~Scrapper();
-    void findTitle(const std::string& title) override;
+    std::vector<Info> findTitle(const QueryOptions& title) override;
 };
 }  // namespace themoviedb
 }  // namespace kfl

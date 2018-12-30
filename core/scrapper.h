@@ -3,6 +3,10 @@
 
 #include <memory>
 #include <string>
+#include <vector>
+
+#include "info.h"
+#include "queryoptions.h"
 
 namespace kfl {
 
@@ -10,7 +14,7 @@ struct ScrapperBackend;
 struct Scrapper {
     Scrapper();
     ~Scrapper();
-    void findTitle(const std::string& title);
+    std::vector<Info> findTitle(const QueryOptions& opts);
 
    private:
     std::unique_ptr<ScrapperBackend> d_ptr;

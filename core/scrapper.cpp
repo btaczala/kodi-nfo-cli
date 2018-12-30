@@ -6,5 +6,5 @@ namespace kfl {
 Scrapper::Scrapper() : d_ptr(std::make_unique<themoviedb::Scrapper>()) {}
 Scrapper::~Scrapper() {}
 
-void Scrapper::findTitle(const std::string& title) { d_ptr->findTitle(title); }
+std::vector<Info> Scrapper::findTitle(const QueryOptions& title) { return d_ptr->findTitle(title); }
 }  // namespace kfl

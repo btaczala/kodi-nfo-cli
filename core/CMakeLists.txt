@@ -7,7 +7,7 @@ add_library(themoviedb-backend
 target_include_directories(themoviedb-backend
                            PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
                                   ${CURLPP_INCLUDE_DIR})
-target_link_libraries(themoviedb-backend PUBLIC ${CURLPP_LIBRARIES} fmt)
+target_link_libraries(themoviedb-backend PUBLIC ${CURLPP_LIBRARIES} fmt json)
 
 add_library(nfo_core STATIC scrapper.cpp)
 target_include_directories(nfo_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
