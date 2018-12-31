@@ -6,9 +6,36 @@
 #include <curlpp/Options.hpp>
 #include <json.hpp>
 
+#include <iomanip>
+#include <sstream>
+
 namespace {
 const std::string kApiUrl = "https://api.themoviedb.org";
 const std::string kApiVersion = "3";
+
+std::string encode_as_uri(const std::string& str) {
+    std::vector<std::string> ret;
+
+    std::transform(str.begin(), str.end(), std::back_inserter(ret),
+                   [](char c) -> std::string {
+                       if (std::isalnum(c) || c == '-' || c == '_' ||
+                           c == '.' || c == '~') {
+                           return std::string{c};
+                       }
+                       std::ostringstream escaped;
+                       escaped.fill('0');
+                       escaped << std::hex;
+                       escaped << std::uppercase;
+                       escaped << '%' << std::setw(2) << int((unsigned char)c);
+                       escaped << std::nouppercase;
+
+                       return escaped.str();
+                   });
+
+    using namespace std::literals;
+    return std::accumulate(ret.begin(), ret.end(), ""s);
+}
+
 }  // namespace
 
 namespace kfl {
@@ -27,7 +54,8 @@ std::vector<Info> Scrapper::findTitle(const QueryOptions& options) {
             fmt::arg("apiKey", kfl::themoviedb::getApiKey()),
             fmt::arg("language", "en-US"), fmt::arg("command", "search"));
         for (const auto& option : options) {
-            url.append(fmt::format("&{}={}", option.first, option.second));
+            url.append(fmt::format("&{}={}", option.first,
+                                   encode_as_uri(option.second)));
         }
 
         std::string response;

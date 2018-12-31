@@ -4,13 +4,21 @@
 
 #include <fmt/format.h>
 
-int main(int argc, char *argv[]) {
+namespace {
+const std::uint16_t defaultPopularityFilter = 5;
+}
+
+int main(int argc, char* argv[]) {
     using namespace cxxopts;
     Options opts{"kodi-nfo-cli", ""};
 
-    opts.add_options()("t,title", "Title to find",
-                       cxxopts::value<std::string>())(
-        "y,year", "When the title was released", cxxopts::value<std::string>());
+    // clang-format off
+    opts.add_options()
+        ("t,title", "Title to find",cxxopts::value<std::string>())
+        ("y,year", "When the title was released", cxxopts::value<std::string>())
+        ("a,all", "Include all results, don't limit")
+        ;
+    // clang-format on
     const auto options = opts.parse(argc, argv);
 
     if (options.count("t") == 0) {
@@ -28,6 +36,16 @@ int main(int argc, char *argv[]) {
     }
 
     auto titles = s.findTitle(queryOpts);
+
+    if (options.count("a") == 0) {
+        titles.erase(std::remove_if(titles.begin(), titles.end(),
+                                    [](const auto& title) {
+                                        return title.popularity <
+                                               defaultPopularityFilter;
+                                    }),
+                     titles.end());
+    }
+
     std::sort(titles.begin(), titles.end(), [](auto lhs, auto rhs) {
         return lhs.popularity > rhs.popularity;
     });
