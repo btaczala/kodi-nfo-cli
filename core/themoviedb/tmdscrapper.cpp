@@ -66,7 +66,6 @@ std::vector<Info> Scrapper::findTitle(const QueryOptions& options) {
         };
         request.setOpt(new curlpp::Options::WriteFunction(fn));
 
-        std::cout << url << "\n";
         request.setOpt(curlpp::Options::Url(url));
         request.perform();
 
@@ -90,6 +89,37 @@ std::vector<Info> Scrapper::findTitle(const QueryOptions& options) {
     } catch (const std::exception& ex) {
     }
     return searchResults;
+}
+
+FullMovieEntry Scrapper::get(std::uint32_t id) {
+    try {
+        curlpp::Easy request;
+
+        std::string url = fmt::format(
+            "{url}/{apiVersion}/"
+            "movie/{movie_id}?api_key={apiKey}&language={language}",
+            fmt::arg("url", kApiUrl), fmt::arg("apiVersion", kApiVersion),
+            fmt::arg("apiKey", kfl::themoviedb::getApiKey()),
+            fmt::arg("movie_id", id), fmt::arg("language", "en-US"));
+
+        std::string response;
+        curlpp::Types::WriteFunctionFunctor fn =
+            [&response](char* bytes, size_t size, size_t nbytes) -> size_t {
+            response.append(const_cast<const char*>(bytes), nbytes);
+            return nbytes * size;
+        };
+        request.setOpt(new curlpp::Options::WriteFunction(fn));
+
+        request.setOpt(curlpp::Options::Url(url));
+        request.perform();
+
+        const auto json = nlohmann::json::parse(response);
+        return FullMovieEntry{json["id"], json["title"], json["tagline"],
+                              json["overview"], json["release_date"]};
+
+    } catch (const std::exception& ex) {
+    }
+    return FullMovieEntry{};
 }
 
 }  // namespace themoviedb

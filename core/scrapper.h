@@ -15,6 +15,7 @@ struct Scrapper {
     Scrapper();
     ~Scrapper();
     std::vector<Info> findTitle(const QueryOptions& opts);
+    FullMovieEntry get(const std::uint32_t& id);
 
    private:
     std::unique_ptr<ScrapperBackend> d_ptr;

@@ -11,6 +11,7 @@ struct Scrapper : public kfl::ScrapperBackend {
     Scrapper();
     ~Scrapper();
     std::vector<Info> findTitle(const QueryOptions& title) override;
+    FullMovieEntry get(std::uint32_t) override;
 };
 }  // namespace themoviedb
 }  // namespace kfl

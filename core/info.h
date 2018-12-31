@@ -1,8 +1,8 @@
 #ifndef INFO_H_TZCHDXLS
 #define INFO_H_TZCHDXLS
 
-#include <string>
 #include <cstdint>
+#include <string>
 
 namespace kfl {
 struct Info {
@@ -10,6 +10,14 @@ struct Info {
     std::string title;
     std::string releaseDate;
     double popularity;
+};
+
+struct FullMovieEntry {
+    std::uint32_t id;
+    std::string title;
+    std::string tagline;
+    std::string overview;
+    std::string release_date;
 };
 }  // namespace kfl
 

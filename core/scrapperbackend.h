@@ -9,6 +9,8 @@ namespace kfl {
 struct ScrapperBackend {
     virtual ~ScrapperBackend() = default;
     virtual std::vector<Info> findTitle(const QueryOptions& title) = 0;
+
+    virtual FullMovieEntry get(std::uint32_t id) = 0;
 };
 }  // namespace kfl
 
