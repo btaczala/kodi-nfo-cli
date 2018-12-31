@@ -9,6 +9,19 @@
 #include <iomanip>
 #include <sstream>
 
+template <typename T>
+void from_json(const nlohmann::json& j, T& obj) {
+    if (j.is_object()) {
+        meta::doForAllMembers<T>([&obj, &j](auto& member) {
+            auto& objName = j[member.getName()];
+            using MemberT = meta::get_member_type<decltype(member)>;
+            if (member.canGetRef()) {
+                member.getRef(obj) = objName.template get<MemberT>();
+            }
+        });
+    }
+}
+
 namespace {
 const std::string kApiUrl = "https://api.themoviedb.org";
 const std::string kApiVersion = "3";
@@ -79,12 +92,9 @@ std::vector<Info> Scrapper::findTitle(const QueryOptions& options) {
         std::transform(resultList.begin(), resultList.end(),
                        std::back_inserter(searchResults),
                        [](const nlohmann::json& entry) {
-                           return Info{
-                               entry["id"].get<std::uint32_t>(),
-                               entry["title"].get<std::string>(),
-                               entry["release_date"].get<std::string>(),
-                               entry["popularity"].get<double>(),
-                           };
+                           Info f;
+                           ::from_json(entry, f);
+                           return f;
                        });
     } catch (const std::exception& ex) {
     }
@@ -95,7 +105,7 @@ FullMovieEntry Scrapper::get(std::uint32_t id) {
     try {
         curlpp::Easy request;
 
-        std::string url = fmt::format(
+        const std::string url = fmt::format(
             "{url}/{apiVersion}/"
             "movie/{movie_id}?api_key={apiKey}&language={language}",
             fmt::arg("url", kApiUrl), fmt::arg("apiVersion", kApiVersion),
@@ -114,8 +124,11 @@ FullMovieEntry Scrapper::get(std::uint32_t id) {
         request.perform();
 
         const auto json = nlohmann::json::parse(response);
-        return FullMovieEntry{json["id"], json["title"], json["tagline"],
-                              json["overview"], json["release_date"]};
+        FullMovieEntry fullEntry;
+        ::from_json(json, fullEntry);
+        // return FullMovieEntry{json["id"], json["title"], json["tagline"],
+        // json["overview"], json["release_date"]};
+        return fullEntry;
 
     } catch (const std::exception& ex) {
     }

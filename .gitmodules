@@ -4,3 +4,6 @@
 [submodule "3rdParty/curlpp"]
 	path = 3rdParty/curlpp
 	url = https://github.com/jpbarrette/curlpp.git
+[submodule "3rdParty/MetaStuff"]
+	path = 3rdParty/MetaStuff
+	url = https://github.com/eliasdaler/MetaStuff.git
