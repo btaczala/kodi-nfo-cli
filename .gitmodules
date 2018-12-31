@@ -1,3 +1,6 @@
 [submodule "3rdParty/fmt"]
 	path = 3rdParty/fmt
 	url = https://github.com/fmtlib/fmt.git
+[submodule "3rdParty/curlpp"]
+	path = 3rdParty/curlpp
+	url = https://github.com/jpbarrette/curlpp.git
